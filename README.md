@@ -1,6 +1,6 @@
 # IMAGE_enhancer_gene_links
 
-##Generating enhancer-gene links from eQTL data:
+## Generating enhancer-gene links from eQTL data:
 
 Download and open eQTL files from GTEx at https://storage.googleapis.com/gtex_analysis_v7/single_tissue_eqtl_data/GTEx_Analysis_v7_eQTL.tar.gz
 
@@ -68,7 +68,7 @@ enhancer        gene    tissue  number_of_eQTL  assay
 10      HUMAN|HGNC=329|UniProtKB=O00468 45      2       2  
 ```
 
-##Generating enhancer-gene links from TAD data:  
+## Generating enhancer-gene links from TAD data:  
 
 Download TAD data from ENCODE:  
 https://www.encodeproject.org/matrix/?type=Experiment&status=released&replicates.library.biosample.donor.organism.scientific_name=Homo+sapiens&searchTerm=domain&assembly=hg19&assay_slims=3D+chromatin+structure  
