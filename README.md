@@ -12,13 +12,13 @@ Output: chr[1-22,X,Y]Colon_Sigmoid.v7.signif_variant_gene_pairs.txt
 
 Trim these files to have the following columns (newdata.txt):
 ``
-              variant              gene pval_nominal        tissue\
- 1 13_19725266_A_G_b37 ENSG00000196199.9  6.41011e-06 Colon_Sigmoid\
- 2 13_19725770_T_C_b37 ENSG00000196199.9  6.41011e-06 Colon_Sigmoid\
- 3 13_19729840_A_G_b37 ENSG00000196199.9  6.41011e-06 Colon_Sigmoid\
- 4 13_19736675_A_G_b37 ENSG00000196199.9  6.41011e-06 Colon_Sigmoid\
- 5 13_19744133_T_C_b37 ENSG00000196199.9  6.41011e-06 Colon_Sigmoid\
- 6 13_19779235_T_G_b37 ENSG00000196199.9  7.48995e-06 Colon_Sigmoid\
+              variant              gene pval_nominal        tissue<br/>
+ 1 13_19725266_A_G_b37 ENSG00000196199.9  6.41011e-06 Colon_Sigmoid<br/>
+ 2 13_19725770_T_C_b37 ENSG00000196199.9  6.41011e-06 Colon_Sigmoid<br/>
+ 3 13_19729840_A_G_b37 ENSG00000196199.9  6.41011e-06 Colon_Sigmoid<br/>
+ 4 13_19736675_A_G_b37 ENSG00000196199.9  6.41011e-06 Colon_Sigmoid<br/>
+ 5 13_19744133_T_C_b37 ENSG00000196199.9  6.41011e-06 Colon_Sigmoid<br/>
+ 6 13_19779235_T_G_b37 ENSG00000196199.9  7.48995e-06 Colon_Sigmoid<br/>
 ``
 Rearrange the file into bed format:
 ``
