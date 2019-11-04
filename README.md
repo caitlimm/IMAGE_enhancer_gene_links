@@ -68,6 +68,48 @@ enhancer        gene    tissue  number_of_eQTL  assay
 10      HUMAN|HGNC=329|UniProtKB=O00468 45      2       2  
 ```
 
+## Generating enhancer-gene links from hierarchical TAD data:  
+
+Download files from https://www.cs.huji.ac.il/~tommy/PSYCHIC/  
+
+```
+$ head lib25_K562.enh_1e-4.bed
+chr1    525000  550000  LOC100288069:-175Kb:0:0:6.7e+02:1.1e+03
+chr1    575000  600000  LINC00115:-175Kb:4e-06:1.2e-07:3.4e+02:6.1e+02
+chr1    575000  600000  LOC100288069:-125Kb:6.1e-10:1.8e-11:6.7e+02:1e+03
+```
+Rid our files of any putative enhancer coordinates that include negative values so that bedtools can run the intersect command:  
+```
+$ perl nonegvalues.pl hES.enh_1e-4.bed nn_hES.enh_1e-4.bed out
+$ bedtools intersect -wa -wb -f 0.9 -a CREbedDBenhancers -b nn_hES.enh_1e-4.bed > nn_hES.enh_1e-4_intersect
+```
+Transform these gene names to ENSG>PANTHERlongID format:  
+The file results.txt is HGNC gene ID information.  
+```
+$ head resultsHGNC.txt
+HGNC ID Status  Approved symbol Approved name   UniProt accession       Ensembl gene ID Previous name   Alias name
+HGNC:5  Approved        A1BG    alpha-1-B glycoprotein  P04217  ENSG00000121410
+HGNC:37133      Approved        A1BG-AS1        A1BG antisense RNA 1            ENSG00000268895 non-protein coding RNA 181
+HGNC:37133      Approved        A1BG-AS1        A1BG antisense RNA 1            ENSG00000268895 A1BG antisense RNA (non-protein coding)
+HGNC:37133      Approved        A1BG-AS1        A1BG antisense RNA 1            ENSG00000268895 A1BG antisense RNA 1 (non-protein coding)
+HGNC:24086      Approved        A1CF    APOBEC1 complementation factor  Q9NQ94  ENSG00000148584
+
+$ perl HGNC2PANTH.pl nn_hES.enh_1e-4_intersect results.txt pantherGeneList.txt out_1 owt_1 hES
+```
+Record the p-value of the association and reformat the link to enhancerID\tPANTHERgene\ttissueID\tassay\tp-value\n. Sort by enhancer then gene.  
+```
+$ perl reformat.pl out_1 intTADlinks_hES_1e-4
+chr1	100125400	100125601	66387	HUMAN|HGNC=15846|UniProtKB=Q9NP74	GM12878	TADinteractions	4.1e-06
+chr1	100126086	100126457	EH37E0105510	HUMAN|HGNC=15846|UniProtKB=Q9NP74	GM12878	TADinteractions	4.1e-06
+chr1	100127349	100127788	EH37E0105511	HUMAN|HGNC=15846|UniProtKB=Q9NP74	GM12878	TADinteractions	4.1e-06
+$ perl reformat.pl PSYCHIClinks tissuetable_10092018.txt PSYCHIClinksDB
+EH37E0105481	HUMAN|HGNC=15846|UniProtKB=Q9NP74	49	5.4e-14	4
+EH37E0105482	HUMAN|HGNC=15846|UniProtKB=Q9NP74	49	5.4e-14	4
+EH37E0105483	HUMAN|HGNC=15846|UniProtKB=Q9NP74	49	5.4e-14	4
+```
+
+## Generating enhancer-gene links from ChIA-PET data:  
+
 ## Generating enhancer-gene links from TAD data:  
 
 Download TAD data from ENCODE:  
