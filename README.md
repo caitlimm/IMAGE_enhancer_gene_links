@@ -11,6 +11,7 @@ $ perl split.pl Colon_Sigmoid.v7.signif_variant_gene_pairs.txt
 Output: chr[1-22,X,Y]Colon_Sigmoid.v7.signif_variant_gene_pairs.txt
 
 Trim these files to have the following columns (newdata.txt):
+
               variant              gene pval_nominal        tissue
 1 13_19725266_A_G_b37 ENSG00000196199.9  6.41011e-06 Colon_Sigmoid
 2 13_19725770_T_C_b37 ENSG00000196199.9  6.41011e-06 Colon_Sigmoid
