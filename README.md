@@ -110,6 +110,63 @@ EH37E0105483	HUMAN|HGNC=15846|UniProtKB=Q9NP74	49	5.4e-14	4
 
 ## Generating enhancer-gene links from ChIA-PET data:  
 
+Run the raw fastq files from the ChIA-PET experiments from ENCODE (https://www.encodeproject.org/matrix/?type=Experiment&status=released&searchTerm=chia-pet&biosample_ontology.classification=cell+line&assembly=hg19) through Mango. Output file format is K562.interactions.fdr.mango.  
+```
+$head K562.interactions.fdr.mango
+chr1	28843710	28847368	chr1	28905534	28909433	68	1.19571806767109e-05
+chr1	28843710	28847368	chr1	28973949	28976946	48	1.19176621106095e-05
+chr1	28878616	28880932	chr1	28905534	28909433	71	1.11787481232535e-09
+```
+The two regions are interacting and the integer value is the number of PETs that support the interaction. The last column is the p-value.  
+Give the regions their own lines and then, in order to preserve their interaction, assign a name column chr1:start1..end1-chr1:start2..end2  
+Add a column with the cell type, target protein, and p-value.  
+```
+$ perl celltypev2.pl HCT116_POLR2A.interactions.fdr.mango HCT116-POLR2A aHCT116_POLR2A.interactions.fdr.mango
+$ head aHCT116_POLR2A.interactions.fdr.mango
+chr1    204097807       204099318       chr1:203830001..203831938-chr1:204097807..204099318     HCT116-POLR2A_0.0469616680625812
+chr1    226308706       226311164       chr1:226308706..226311164-chr1:226734990..226736359     HCT116-POLR2A_0.0290136268822468
+chr1    226734990       226736359       chr1:226308706..226311164-chr1:226734990..226736359     HCT116-POLR2A_0.0290136268822468
+```
+Overlap the enhancers with the regions in this file:  
+```
+$ bedtools intersect -wa -wb -F 0.5 -f 0.5 -e -a CREbedDBenhancers -b aHCT116_POLR2A.interactions.fdr.mango > chiaHCT116POLR2Aenhancers
+chr1    204098794       204099127       2356    chr1    204097807       204099318       chr1:203830001..203831938-chr1:204097807..204099318     HCT116-POLR2A_0.0469616680625812
+chr10   125754916       125755682       6624    chr10   125753470       125756187       chr10:125753470..125756187-chr10:126076780..126078800   HCT116-POLR2A_0.00088931675469528
+chr13   44817306        44817618        16497   chr13   44816437        44819352        chr13:44816437..44819352-chr13:45008690..45012042       HCT116-POLR2A_0.00152464038594458
+```
+Search for overlap between the ChIA-PET region and the gene’s promoter. Here we restrict the promoter to the 600bp immediately upstream of the gene TSS.  
+```
+$ head hg19genes.txt
+Gene stable ID	Transcription start site (TSS)	Gene end (bp)	Gene start (bp)	Strand	Chromosome/scaffold name
+ENSG00000228927	9237436	9307357	9236030	1	Y	
+ENSG00000012817	21878581	21906825	21865751	-1	Y
+$ perl chiageneTSS.pl hg19genes.txt pantherGeneList.txt TSSgenesbed
+$ head TSSgenesbed
+chrY	21906825	21907425	ENSG00000012817
+chrY	9236836	9237436	ENSG00000228927
+$ bedtools intersect -wa -wb -F 0.5 -f 0.5 -e -a TSSgenesbed -b aHCT116_POLR2A.interactions.fdr.mango > chiaHCT116POLR2Agenes
+chr1    155532598       155533198       ENSG00000116539 chr1    155531658       155533964       chr1:155531658..155533964-chr1:155657522..155659682     HCT116-POLR2A_0.00543703324418981
+chr1    155658110       155658710       ENSG00000163374 chr1    155657522       155659682       chr1:155531658..155533964-chr1:155657522..155659682     HCT116-POLR2A_0.00543703324418981
+chr13   20437776        20438376        ENSG00000132950 chr13   20436687        20439647        chr13:20436687..20439647-chr13:20531878..20535015       HCT116-POLR2A_5.72698186651621e-07
+```
+Use these overlap files to generate enhancer-gene links:
+```
+$ perl chiagenesenhancers.pl chiaHCT116POLR2Aenhancers chiaHCT116POLR2Agenes linksHCT116POLR2Achia pantherGeneList.txt tissuetable_10092018.txt
+$ head linksHCT116POLR2Achia
+29719   HUMAN|HGNC=25112|UniProtKB=Q96IR2       59      6.33270007314538e-05    1
+50016   HUMAN|HGNC=24164|UniProtKB=O94811       59      0.00426355355394808     1
+50085   HUMAN|HGNC=15831|UniProtKB=P81877       59      0.0108232752605979      1
+```
+Concatenating these files to get linkschia. Order the links with:
+```
+$ perl orderlinks.pl linkschia linksDBchia
+$ head linksDBchia
+enhancer	gene	tissue 	p-value	assay
+29719   HUMAN|HGNC=25112|UniProtKB=Q96IR2       59      6.33270007314538e-05    1
+50016   HUMAN|HGNC=24164|UniProtKB=O94811       59      0.00426355355394808     1
+50085   HUMAN|HGNC=15831|UniProtKB=P81877       59      0.0108232752605979      1
+```
+
 ## Generating enhancer-gene links from TAD data:  
 
 Download TAD data from ENCODE:  
